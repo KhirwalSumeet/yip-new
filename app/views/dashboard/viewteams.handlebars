@@ -1,0 +1,104 @@
+{{#if message}}
+<div class="alert alert-success">
+	<strong>{{message}}</strong> 
+</div>
+{{/if}}
+<div class="col-lg-12">
+<h2>Bordered Table</h2>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Team Name</th>
+                <th>First Team Member Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Second Team Member Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Third Team Member Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+            </tr>
+        </thead>
+        <tbody id='tbody'>
+            
+        </tbody>
+    </table>
+</div>
+</div>
+
+<script>
+   	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+	    if (this.readyState == 4 && this.status == 200) {
+	       setTable(xhttp.responseText);
+	    }
+	};
+	xhttp.open("GET", "/getteams", true);
+	xhttp.send();
+
+	function setTable(data) {
+	data = JSON.parse(data);
+	console.log(data.length);
+	var table = document.getElementById('tbody');
+		for( i=0; i<data.length; i++ ) {
+			var tr = document.createElement('tr');
+			td = document.createElement('td');
+			t = document.createTextNode(data[i]["name"]);
+			td.appendChild(t);
+			tr.appendChild(td);
+			td = document.createElement('td');
+			t = document.createTextNode(data[i]["firstStudent"]["name"]);
+			td.appendChild(t);
+			tr.appendChild(td);
+			td = document.createElement('td');
+			t = document.createTextNode(data[i]["firstStudent"]["email"]);
+			td.appendChild(t);
+			tr.appendChild(td);
+			td = document.createElement('td');
+			t = document.createTextNode(data[i]["firstStudent"]["contact"]);
+			td.appendChild(t);
+			tr.appendChild(td);
+			td = document.createElement('td');
+			t = document.createTextNode(data[i]["secondStudent"]["name"]);
+			td.appendChild(t);
+			tr.appendChild(td);
+			td = document.createElement('td');
+			t = document.createTextNode(data[i]["secondStudent"]["email"]);
+			td.appendChild(t);
+			tr.appendChild(td);
+			td = document.createElement('td');
+			t = document.createTextNode(data[i]["secondStudent"]["contact"]);
+			td.appendChild(t);
+			tr.appendChild(td);
+			td = document.createElement('td');
+			t = document.createTextNode(data[i]["thirdStudent"]["name"]);
+			td.appendChild(t);
+			tr.appendChild(td);
+			td = document.createElement('td');
+			t = document.createTextNode(data[i]["thirdStudent"]["email"]);
+			td.appendChild(t);
+			tr.appendChild(td);
+			td = document.createElement('td');
+			t = document.createTextNode(data[i]["thirdStudent"]["contact"]);
+			td.appendChild(t);
+			tr.appendChild(td);
+			td = document.createElement('td');
+			button = document.createElement('button');
+			t = document.createTextNode('Edit');
+			button.setAttribute('onclick','edit("'+data[i]["_id"]+'")');
+			button.appendChild(t);
+			td.appendChild(button);
+			tr.appendChild(td);
+
+			table.appendChild(tr);
+		}
+
+		
+	}
+	function edit(id){
+		location.assign('/editteam/id='+id);
+	}
+
+</script>

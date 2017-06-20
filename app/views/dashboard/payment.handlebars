@@ -1,0 +1,141 @@
+<div class="row">
+    <div class="col-lg-6">
+        <h2>Payments Made</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Transaction id</th>
+                        <th>Mode </th>
+                        <th>Bank Name</th>
+                        <th>Branch</th>
+                        <th>Date</th>
+                        <th>Amount paid</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id='tbody'>
+                    
+                </tbody>
+            </table>
+            <br><Br>
+            <div id="balance"></div>
+        </div>
+    </div>
+    <div class="col-lg-6" style="border-left: solid 2px black">
+        <h2>Add New Payment</h2>
+
+        <form role="form" method='post' action='/payment'>
+			<div class="form-group">
+                <label> Transaction Id</label>
+                <input class="form-control" name="txn" placeholder="Enter transaction id" required>
+            </div>
+
+            <div class="form-group">
+                <label> Date</label>
+                <input class="form-control" name="date" placeholder="Enter date" required>
+            </div>
+
+            <div class="form-group">
+                <label> Mode ( NEFT / RTGS / Cash Deposit / Others )</label>
+                <input class="form-control" name="mode" placeholder="Enter mode of payment" required>
+            </div>
+
+            <div class="form-group">
+                <label> Bank Name</label>
+                <input class="form-control" name="bname" placeholder="Enter bank name" required>
+            </div>
+
+            <div class="form-group">
+                <label> Bank Branch</label>
+                <input class="form-control" name="branch" placeholder="Enter bank branch" required>
+            </div>
+
+            <div class="form-group">
+                <label> Amount </label>
+                <input class="form-control" type="number" name="amount" placeholder="Enter amount paid" required>
+            </div>
+
+            <br><br>
+            <button type="submit" class="btn btn-success">Submit Button</button>
+            <button type="reset" class="btn btn-default">Reset Button</button>
+
+        </form>
+
+    </div>
+    
+
+
+</div>
+<!-- /.row -->
+
+<script>
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        console.log(xhttp.responseText)
+           setTable(xhttp.responseText);
+        }
+    };
+    xhttp.open("GET", "/getpayments", true);
+    xhttp.send();
+
+    function setTable(data) {
+        data = JSON.parse(data);
+        console.log(data.length);
+        var table = document.getElementById('tbody');
+        for( i=0; i<data.length; i++ ) {
+            var tr = document.createElement('tr');
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["transactionId"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["mode"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["bankName"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["bankBranch"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["date"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["amount"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["status"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+
+            table.appendChild(tr);
+        } 
+    }
+
+    var paymentinfo = new XMLHttpRequest();
+    paymentinfo.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        console.log(paymentinfo.responseText)
+           setBalance(paymentinfo.responseText);
+        }
+    };
+    paymentinfo.open("GET", "/balance", true);
+    paymentinfo.send();
+
+    function setBalance (data){
+        data = JSON.parse(data);
+        var div = document.getElementById('balance');
+        var html = "<p><strong> Amount to be paid : </strong> "+data['amount']+"</p>";
+        html = html + "<p><strong> Amount paid : </strong> "+data['paid']+"</p>";
+        html = html + "<p><strong> Balance amount : </strong> "+( parseInt(data['amount']) - parseInt(data['paid']) )+"</p>";
+        div.innerHTML = html;
+    }
+
+</script>
