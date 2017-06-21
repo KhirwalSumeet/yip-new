@@ -63,6 +63,18 @@ module.exports = function(passport) {
 
     }));
 
+    passport.use('admin/login', new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'password',
+        passReqToCallback: true
+    }, function(req, email, password, done) {
+        if(email == 'yip@barciitkgp.com' && password == 'barckgp') {
+            return done(null, email)
+        } else {
+            return done(null, false, req.flash('loginMessage', 'Wrong Credentials.'))
+        }
+    }))
+
 
 
 

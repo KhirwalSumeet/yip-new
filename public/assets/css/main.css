@@ -7,7 +7,7 @@
 	min-height: 80px;
 }
 
-.navbar li a, .navbar .navbar-brand { 
+.navbar li a, .navbar .navbar-brand {
 	color: #d5d5d5 !important;
 }
 
@@ -129,14 +129,14 @@
 	left: 0;
 	background: -moz-linear-gradient(top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%); /* FF3.6-15 */
 	background: -webkit-linear-gradient(top, rgba(0,0,0,1) 0%,rgba(0,0,0,0) 100%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(to bottom, rgba(0,0,0,1) 0%,rgba(0,0,0,0) 100%); 
+	background: linear-gradient(to bottom, rgba(0,0,0,1) 0%,rgba(0,0,0,0) 100%);
 	z-index: 101;
 	/*box-shadow: 0 0 10px black;*/
 	box-sizing: border-box;
 	padding-top:15px;
-	padding-bottom: 15px; 
+	padding-bottom: 15px;
 	padding-left: 10px;
-	padding-right: 10px; 
+	padding-right: 10px;
 }
 
 #nvl p{
@@ -176,4 +176,8 @@
 
 #nav_bar {
 	border-radius: 0px;
+}
+
+.payment-status {
+	width: 100%;
 }

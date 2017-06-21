@@ -96,12 +96,12 @@ router.post('/filldetails', checkloginstateonly, function(req, res){
 			console.log(err);
 		} else {
 			user.details = {};
-			
+
 			user.details.principal = {};
 			user.details.principal.name = req.body.pname;
 			user.details.principal.contact = req.body.pnum;
 			user.details.principal.email = req.body.pemail;
-			
+
 			user.details.teacher = {};
 			user.details.teacher.name = req.body.tname;
 			user.details.teacher.contact = req.body.tnum;
@@ -136,7 +136,7 @@ router.post('/addteam', checkloginstate, function(req, res){
 	newTeam.secondStudent.contact = req.body.num2;
 	newTeam.thirdStudent.name = req.body.name3;
 	newTeam.thirdStudent.email = req.body.email3;
-	newTeam.thirdStudent.contact = req.body.num3;	
+	newTeam.thirdStudent.contact = req.body.num3;
 	newTeam.save();
 	res.render('dashboard/dashboard',{ layout: "dashboard", message: "Team added successfully", title: "Dashboard" });
 });
@@ -173,7 +173,7 @@ router.post('/editteam/id=:id', checkloginstate, function(req, res){
 		newTeam.secondStudent.contact = req.body.num2;
 		newTeam.thirdStudent.name = req.body.name3;
 		newTeam.thirdStudent.email = req.body.email3;
-		newTeam.thirdStudent.contact = req.body.num3;	
+		newTeam.thirdStudent.contact = req.body.num3;
 		newTeam.save();
 		res.render('dashboard/viewteams',{ layout: "dashboard", title: "Your Teams", message: " Team edited successfully" });
 	})
@@ -218,3 +218,54 @@ router.get('/balance', checkloginstate, function(req, res){
 		});
 	})
 });
+
+//routes for admin
+router.get('/admin/login', adminLogin, function(req, res) {
+	res.render('admin/login')
+})
+router.post('/admin/verify', passport.authenticate('admin/login', {
+	successRedirect : '../admin/dashboard', // redirect to the secure profile section
+	failureRedirect : '../admin/loginfailed', // redirect back to the signup page if there is an error
+	failureFlash : true // allow flash messages
+}));
+router.get('/admin/loginfailed', function(req, res) {
+	res.redirect('../admin/login')
+})
+router.get('/admin/dashboard', adminLoginStatus, function(req, res){
+	res.render('admin/dashboard');
+});
+router.get('/admin/getPaymentStatus', adminLoginStatus, function(req, res) {
+	user.find({}, function(err, result) {
+		res.json(result)
+	})
+})
+router.post('/admin/updateStatus', adminLoginStatus, function(req, res) {
+	user.updateOne({'_id': req.body.id}, {'paymentConfirmation': req.body.selected}, function(err) {
+		if(err) {
+			console.log('ooops')
+		}
+	})
+})
+router.post('/admin/addUser', adminLoginStatus, function(req, res) {
+	var newUser = new user()
+	newUser.email = req.body.email
+	newUser.password = req.body.password
+	newUser.save()
+})
+
+function adminLoginStatus(req, res, next) {
+
+  if (!req.isAuthenticated()) {
+    res.redirect('/admin/login');
+  }
+  else
+    return next();
+}
+
+function adminLogin(req, res, next) {
+	if (req.isAuthenticated()) {
+		res.redirect('/admin/dashboard');
+  	}
+  	else
+    	return next();
+}
