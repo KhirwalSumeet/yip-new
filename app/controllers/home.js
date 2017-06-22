@@ -278,7 +278,7 @@ router.post('/admin/adduser', adminLoginStatus, function(req, res) {
 	user.find({ email: req.body.email }, function( err, result){
 		if(result.length) {
 			res.render('admin/manageusers', { layout: "adminnew", messageerror: "User with email id : "+ req.body.email+" already exists !"});
-		} else {	
+		} else {
 			var newUser = new user()
 			newUser.email = req.body.email
 			newUser.password = req.body.password
@@ -318,7 +318,6 @@ router.get('/admin/getpayments', adminLoginStatus, function(req, res) {
 });
 
 router.get('/admin/updateStatus/id=:id&&value=:value',  function(req, res) {
-	
 	var objectId = mongoose.Types.ObjectId(req.params.id);
 	payment.updateOne({'_id': objectId},{ 'status': req.params.value}, function(err) {
 		if(err) {
@@ -356,12 +355,24 @@ router.get('/admin/updateStatus/id=:id&&value=:value',  function(req, res) {
 				} else {
 					res.send("success");
 				}
-				
+
 			})
-			
+
 		}
 	});
 });
+
+router.get('/getlatestteams', checkloginstate, function(req,res) {
+	team.find({ useremail: req.user.email}, null, {sort: {'_id': -1}, limit: 3}, function(err, result) {
+		res.json(result)
+	})
+})
+
+router.get('/getlatestpays', checkloginstate, function(req, res) {
+	payment.find({ email: req.user.email}, null, {sort: {'_id': -1}, limit: 3}, function(err, result){
+		res.json(result);
+	})
+})
 
 function adminLoginStatus(req, res, next) {
 

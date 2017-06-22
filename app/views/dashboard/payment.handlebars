@@ -1,11 +1,11 @@
 {{#if messageerror}}
 <div class="alert alert-danger">
-    <strong>{{messageerror}}</strong> 
+    <strong>{{messageerror}}</strong>
 </div>
 {{/if}}
 {{#if messagesuccess}}
 <div class="alert alert-success">
-    <strong>{{messagesuccess}}</strong> 
+    <strong>{{messagesuccess}}</strong>
 </div>
 {{/if}}
 
@@ -52,11 +52,11 @@
 
             <div class="form-group">
                 <label> Date</label>
-                <input class="form-control" name="date" placeholder="Enter date" required>
+                <input class="form-control" type="date" name="date" placeholder="Enter date" required>
             </div>
 
             <div class="form-group">
-                <label> Mode ( NEFT / RTGS / Cash Deposit / Others )</label>
+                <label> Mode ( NEFT / RTGS / Cash Deposit / Others except cheque)</label>
                 <input class="form-control" name="mode" placeholder="Enter mode of payment" required>
             </div>
 
@@ -82,19 +82,22 @@
             <div class="form-group">
                 <label> Unpaid teams </label> <br><br>
                 <div  ng-repeat="x in unpaid">
-                    <input type="checkbox" ng-click="change([[x._id]])"> <label>[[x.name]]</label> 
+                    <input type="checkbox" ng-click="change([[x._id]])" id="x._id"> <label for="x._id">[[x.name]]</label>
                 </div>
             </div>
 
             <br><br>
             <button type="submit" class="btn btn-success">Submit Button</button>
             <button type="reset" class="btn btn-default">Reset Button</button>
+<!--            <div class="form-group">
+                <input class="form-control" name="ids" required value="[[allids]]" style="opacity: 0; cursor: default">
+            </div> -->
 
         </form>
         <h3> [[message]] </h3>
 
     </div>
-    
+
 
 
 </div>
