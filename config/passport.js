@@ -69,7 +69,7 @@ module.exports = function(passport) {
         passReqToCallback: true
     }, function(req, email, password, done) {
         if(email == 'yip@barciitkgp.com' && password == 'barckgp') {
-            return done(null, email)
+            return done(null, "admin")
         } else {
             return done(null, false, req.flash('loginMessage', 'Wrong Credentials.'))
         }

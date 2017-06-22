@@ -68,7 +68,7 @@ function checkloginstate(req, res, next) {
   if (!req.isAuthenticated()) {
     res.redirect('/login');
   }
-  else if( req.user.details == undefined ) {
+  else if( req.user.details == undefined  && req.user != 'admin' ) {
   	user.findOne({ email: req.user.email }, function(err, user){
   		if(!user.details.principal.contact)
 	  		res.redirect('/filldetails');
@@ -76,18 +76,19 @@ function checkloginstate(req, res, next) {
 	  		return next();
   	});
   }
-  else {
+  else if(req.user != 'admin'){
     return next();
   }
 }
 
 function checkloginstateonly(req, res, next) {
 
-  if (!req.isAuthenticated()) {
+  if (!req.isAuthenticated() && req.user != 'admin') {
     res.redirect('/login');
   }
-  else
+  else if (req.user != 'admin'){
     return next();
+  }
 }
 
 router.post('/filldetails', checkloginstateonly, function(req, res){
@@ -364,7 +365,7 @@ router.get('/admin/updateStatus/id=:id&&value=:value',  function(req, res) {
 
 function adminLoginStatus(req, res, next) {
 
-  if (!req.isAuthenticated()) {
+  if (!req.isAuthenticated() || req.user != 'admin') {
     res.redirect('/admin/login');
   }
   else
@@ -372,7 +373,7 @@ function adminLoginStatus(req, res, next) {
 }
 
 function adminLogin(req, res, next) {
-	if (req.isAuthenticated()) {
+	if (req.isAuthenticated() && req.user == 'admin') {
 		res.redirect('/admin/dashboard');
   	}
   	else
