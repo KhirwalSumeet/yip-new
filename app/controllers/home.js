@@ -304,13 +304,13 @@ router.post('/admin/updateStatus', adminLoginStatus, function(req, res) {
 router.post('/admin/adduser', adminLoginStatus, function(req, res) {
 	user.find({ email: req.body.email }, function( err, result){
 		if(result.length) {
-			res.render('adminnew/manageusers', { layout: "adminnew", messageerror: "User with email id : "+ req.body.email+" already exists !"});
+			res.render('admin/manageusers', { layout: "adminnew", messageerror: "User with email id : "+ req.body.email+" already exists !"});
 		} else {	
 			var newUser = new user()
 			newUser.email = req.body.email
 			newUser.password = req.body.password
 			newUser.save();
-			res.render('adminnew/manageusers', { layout: "adminnew", messagesuccess: "User added successfully !"});
+			res.render('admin/manageusers', { layout: "adminnew", messagesuccess: "User added successfully !"});
 		}
 	});
 });
