@@ -1,0 +1,17 @@
+<div class="container">
+	<div class="row">
+    	<div class="col-sm-6 col-md-4 col-md-offset-4">
+			<div class="page-header">
+		    	<h1>Admin Login</h1>
+		    </div>
+            <div class="account-wall">
+                <form class="form-signin" method="post" action="/admin/verify">
+		            <input class="form-control" type="email" name="email" id="email" placeholder="Email ID" />
+		            <input class="form-control" type="password" name="password" id="name" placeholder="password" /><br>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+                </form>
+                <p class="error-message">{{message}}</p>
+            </div>
+    	</div>
+	</div>
+</div>

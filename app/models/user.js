@@ -23,7 +23,8 @@ var userSchema = new Schema({
   		city: String,
   		state: String
   	}
-  }
+  },
+  paymentConfirmation: String
 });
 
 
