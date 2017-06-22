@@ -220,6 +220,57 @@ router.get('/balance', checkloginstate, function(req, res){
 });
 
 //routes for admin
+// router.get('/admin/login', adminLogin, function(req, res) {
+// 	res.render('admin/login')
+// })
+// router.post('/admin/verify', passport.authenticate('admin/login', {
+// 	successRedirect : '../admin/dashboard', // redirect to the secure profile section
+// 	failureRedirect : '../admin/loginfailed', // redirect back to the signup page if there is an error
+// 	failureFlash : true // allow flash messages
+// }));
+// router.get('/admin/loginfailed', function(req, res) {
+// 	res.redirect('../admin/login')
+// })
+// router.get('/admin/dashboard', adminLoginStatus, function(req, res){
+// 	res.render('admin/dashboard');
+// });
+// router.get('/admin/getPaymentStatus', adminLoginStatus, function(req, res) {
+// 	user.find({}, function(err, result) {
+// 		res.json(result)
+// 	})
+// })
+// router.post('/admin/updateStatus', adminLoginStatus, function(req, res) {
+// 	user.updateOne({'_id': req.body.id}, {'paymentConfirmation': req.body.selected}, function(err) {
+// 		if(err) {
+// 			console.log('ooops')
+// 		}
+// 	})
+// })
+// router.post('/admin/addUser', adminLoginStatus, function(req, res) {
+// 	var newUser = new user()
+// 	newUser.email = req.body.email
+// 	newUser.password = req.body.password
+// 	newUser.save()
+// })
+
+// function adminLoginStatus(req, res, next) {
+
+//   if (!req.isAuthenticated()) {
+//     res.redirect('/admin/login');
+//   }
+//   else
+//     return next();
+// }
+
+// function adminLogin(req, res, next) {
+// 	if (req.isAuthenticated()) {
+// 		res.redirect('/admin/dashboard');
+//   	}
+//   	else
+//     	return next();
+// }
+
+
 router.get('/admin/login', adminLogin, function(req, res) {
 	res.render('admin/login')
 })
@@ -229,29 +280,82 @@ router.post('/admin/verify', passport.authenticate('admin/login', {
 	failureFlash : true // allow flash messages
 }));
 router.get('/admin/loginfailed', function(req, res) {
-	res.redirect('../admin/login')
+	res.render('admin/login',{ message: "Wrong credentials" })
 })
 router.get('/admin/dashboard', adminLoginStatus, function(req, res){
-	res.render('admin/dashboard');
+	res.render('admin/dashboard', { layout: "adminnew"});
 });
+
 router.get('/admin/getPaymentStatus', adminLoginStatus, function(req, res) {
 	user.find({}, function(err, result) {
 		res.json(result)
 	})
 })
+
 router.post('/admin/updateStatus', adminLoginStatus, function(req, res) {
-	user.updateOne({'_id': req.body.id}, {'paymentConfirmation': req.body.selected}, function(err) {
+	payment.updateOne({'_id': req.body.id}, {'paymentConfirmation': req.body.selected}, function(err) {
 		if(err) {
 			console.log('ooops')
+		} else {
 		}
 	})
 })
-router.post('/admin/addUser', adminLoginStatus, function(req, res) {
-	var newUser = new user()
-	newUser.email = req.body.email
-	newUser.password = req.body.password
-	newUser.save()
+
+router.post('/admin/adduser', adminLoginStatus, function(req, res) {
+	user.find({ email: req.body.email }, function( err, result){
+		if(result.length) {
+			res.render('adminnew/manageusers', { layout: "adminnew", messageerror: "User with email id : "+ req.body.email+" already exists !"});
+		} else {	
+			var newUser = new user()
+			newUser.email = req.body.email
+			newUser.password = req.body.password
+			newUser.save();
+			res.render('adminnew/manageusers', { layout: "adminnew", messagesuccess: "User added successfully !"});
+		}
+	});
+});
+
+
+router.get('/admin/getusers', adminLoginStatus, function(req, res) {
+	user.find({}, function(err, result) {
+		res.json(result);
+	})
 })
+
+router.get('/admin/manageusers', adminLoginStatus, function(req, res){
+	res.render('admin/manageusers', { layout: "adminnew"});
+});
+
+router.get('/admin/payments', adminLoginStatus, function(req, res){
+	res.render('admin/payments', { layout: "adminnew"});
+});
+
+router.get('/admin/payments/updateSuccess', adminLoginStatus, function(req, res){
+	res.render('admin/payments', { layout: "adminnew", messagesuccess: "Status updated successfully"});
+});
+
+router.get('/admin/payments/updateError', adminLoginStatus, function(req, res){
+	res.render('admin/payments', { layout: "adminnew", messageerror: "Status cannot be updated"});
+});
+
+router.get('/admin/getpayments', adminLoginStatus, function(req, res) {
+	payment.find({}, function(err, result) {
+		res.json(result)
+	});
+});
+
+router.get('/admin/updateStatus/id=:id&&value=:value', adminLoginStatus, function(req, res) {
+	
+	var objectId = mongoose.Types.ObjectId(req.params.id);
+	payment.updateOne({'_id': objectId},{ 'status': req.params.value}, function(err) {
+		if(err) {
+			console.log(err);
+			res.send("error");
+		} else {
+			res.send("success");
+		}
+	});
+});
 
 function adminLoginStatus(req, res, next) {
 

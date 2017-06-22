@@ -1,0 +1,146 @@
+{{#if messageerror}}
+<div class="alert alert-danger">
+    <strong>{{messageerror}}</strong> 
+</div>
+{{/if}}
+{{#if messagesuccess}}
+<div class="alert alert-success">
+    <strong>{{messagesuccess}}</strong> 
+</div>
+{{/if}}
+<div class="row">
+    <div class="col-lg-12">
+        <h2>All Users</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Transaction id</th>
+                        <th>Email</th>
+                        <th>Mode </th>
+                        <th>Bank Name</th>
+                        <th>Branch</th>
+                        <th>Date</th>
+                        <th>Amount paid</th>
+                        <th>Status</th>
+                        <th>Update Status </th>
+                        <th> Update </th>
+                    </tr>
+                </thead>
+                <tbody id='tbody'>
+                    
+                </tbody>
+            </table>
+            <br><Br>
+            <div id="balance"></div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+<script>
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        console.log(xhttp.responseText)
+           setTable(xhttp.responseText);
+        }
+    };
+    xhttp.open("GET", "/admin/getpayments", true);
+    xhttp.send();
+
+    function setTable(data) {
+        data = JSON.parse(data);
+        console.log(data.length);
+        var table = document.getElementById('tbody');
+        for( i=0; i<data.length; i++ ) {
+            var tr = document.createElement('tr');
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["transactionId"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["email"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["mode"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["bankName"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["bankBranch"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["date"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["amount"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["status"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+
+            td = document.createElement('td');
+            select = document.createElement('select');
+            select.setAttribute('id',data[i]["_id"]);
+            option = document.createElement('option');
+            t = document.createTextNode("Verified");
+            option.appendChild(t);
+            select.appendChild(option);
+            option = document.createElement('option');
+            t = document.createTextNode("Duplicate");
+            option.appendChild(t);
+            select.appendChild(option);
+            option = document.createElement('option');
+            t = document.createTextNode("Pending");
+            option.appendChild(t);
+            select.appendChild(option);
+            td.appendChild(select);
+            tr.appendChild(td);
+            option = document.createElement('option');
+            t = document.createTextNode("Unsuccessful");
+            option.appendChild(t);
+            select.appendChild(option);
+            td.appendChild(select);
+            tr.appendChild(td);
+
+            td = document.createElement('td');
+            button = document.createElement('button');
+            t = document.createTextNode("Update");
+            button.appendChild(t);
+            button.setAttribute('onclick','update("'+data[i]["_id"]+'")');
+            td.appendChild(button);
+            tr.appendChild(td);
+
+            table.appendChild(tr);
+        } 
+
+    }
+
+    function update(id) {
+        value = document.getElementById(id).value;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+            console.log(xhttp.responseText);
+                if( xhttp.responseText == "success" ) {
+                    window.location = '/admin/payments/updateSuccess';
+                } else {
+
+                    window.location = '/admin/payments/updateError';
+                }
+            }
+        };
+        xhttp.open("GET", "/admin/updateStatus/id="+id+"&&value="+value , true);
+        xhttp.send();
+    }
+
+</script>

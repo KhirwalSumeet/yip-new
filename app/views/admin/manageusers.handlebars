@@ -1,0 +1,82 @@
+{{#if messageerror}}
+<div class="alert alert-danger">
+	<strong>{{messageerror}}</strong> 
+</div>
+{{/if}}
+{{#if messagesuccess}}
+<div class="alert alert-success">
+	<strong>{{messagesuccess}}</strong> 
+</div>
+{{/if}}
+<div class="row">
+    <div class="col-lg-6">
+        <h2>All Users</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Email </th>
+                        <th>Password </th>
+                    </tr>
+                </thead>
+                <tbody id='tbody'>
+                    
+                </tbody>
+            </table>
+            <br><Br>
+            <div id="balance"></div>
+        </div>
+    </div>
+    <div class="col-lg-6" style="border-left: solid 2px black">
+        <h2>Add New User</h2>
+
+        <form role="form" method='post' action='/admin/adduser'>
+			<div class="form-group">
+                <label> User Email</label>
+                <input class="form-control" name="email" placeholder="Enter email" required>
+            </div>
+
+            <div class="form-group">
+                <label> Password </label>
+                <input class="form-control" name="password" placeholder="Enter password" required>
+            </div>
+
+            <br><br>
+            <button type="submit" class="btn btn-success">Submit Button</button>
+            <button type="reset" class="btn btn-default">Reset Button</button>
+        </form>
+    </div>
+</div>
+<!-- /.row -->
+
+<script>
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        console.log(xhttp.responseText)
+           setTable(xhttp.responseText);
+        }
+    };
+    xhttp.open("GET", "/admin/getusers", true);
+    xhttp.send();
+
+    function setTable(data) {
+        data = JSON.parse(data);
+        console.log(data.length);
+        var table = document.getElementById('tbody');
+        for( i=0; i<data.length; i++ ) {
+            var tr = document.createElement('tr');
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["email"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["password"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+
+            table.appendChild(tr);
+        } 
+    }
+
+</script>
