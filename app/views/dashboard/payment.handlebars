@@ -1,4 +1,15 @@
-<div class="row">
+{{#if messageerror}}
+<div class="alert alert-danger">
+    <strong>{{messageerror}}</strong> 
+</div>
+{{/if}}
+{{#if messagesuccess}}
+<div class="alert alert-success">
+    <strong>{{messagesuccess}}</strong> 
+</div>
+{{/if}}
+
+<div class="row" ng-controller="payment">
     <div class="col-lg-6">
         <h2>Payments Made</h2>
         <div class="table-responsive">
@@ -15,7 +26,15 @@
                     </tr>
                 </thead>
                 <tbody id='tbody'>
-                    
+                    <tr ng-repeat="x in paymentData">
+                    <td> [[ x.transactionId ]] </td>
+                    <td> [[ x.mode ]] </td>
+                    <td> [[ x.bankName ]] </td>
+                    <td> [[ x.bankBranch ]] </td>
+                    <td> [[ x.date ]] </td>
+                    <td> [[ x.amount ]] </td>
+                    <td> [[ x.status ]] </td>
+                    </tr>
                 </tbody>
             </table>
             <br><Br>
@@ -25,7 +44,7 @@
     <div class="col-lg-6" style="border-left: solid 2px black">
         <h2>Add New Payment</h2>
 
-        <form role="form" method='post' action='/payment'>
+        <form role="form" method='post' action='/payment' id="form">
 			<div class="form-group">
                 <label> Transaction Id</label>
                 <input class="form-control" name="txn" placeholder="Enter transaction id" required>
@@ -53,7 +72,18 @@
 
             <div class="form-group">
                 <label> Amount </label>
-                <input class="form-control" type="number" name="amount" placeholder="Enter amount paid" required>
+                <input class="form-control" type="number" name="amount" required value="[[amount]]" readonly="readonly">
+            </div>
+
+            <div class="form-group">
+                <input class="form-control" name="ids" required value="[[allids]]">
+            </div>
+
+            <div class="form-group">
+                <label> Unpaid teams </label> <br><br>
+                <div  ng-repeat="x in unpaid">
+                    <input type="checkbox" ng-click="change([[x._id]])"> <label>[[x.name]]</label> 
+                </div>
             </div>
 
             <br><br>
@@ -61,6 +91,7 @@
             <button type="reset" class="btn btn-default">Reset Button</button>
 
         </form>
+        <h3> [[message]] </h3>
 
     </div>
     
@@ -69,73 +100,43 @@
 </div>
 <!-- /.row -->
 
+
 <script>
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-        console.log(xhttp.responseText)
-           setTable(xhttp.responseText);
+app.controller("payment", function($scope) {
+    $scope.ids = [];
+    $scope.amount = 0;
+    $.get("/getpayments",function(data){
+
+        $scope.paymentData  = data;
+        $scope.$apply();
+    });
+    $.get("/getteams/unpaid", function(data) {
+        console.log(data);
+        if(data.length) {
+
+            $scope.unpaid = data;
+            $scope.$apply();
+        } else {
+            $('#form').css('display','none');
+            $scope.message = "You have no unpaid teams left ! Cheers !";
         }
-    };
-    xhttp.open("GET", "/getpayments", true);
-    xhttp.send();
 
-    function setTable(data) {
-        data = JSON.parse(data);
-        console.log(data.length);
-        var table = document.getElementById('tbody');
-        for( i=0; i<data.length; i++ ) {
-            var tr = document.createElement('tr');
-            td = document.createElement('td');
-            t = document.createTextNode(data[i]["transactionId"]);
-            td.appendChild(t);
-            tr.appendChild(td);
-            td = document.createElement('td');
-            t = document.createTextNode(data[i]["mode"]);
-            td.appendChild(t);
-            tr.appendChild(td);
-            td = document.createElement('td');
-            t = document.createTextNode(data[i]["bankName"]);
-            td.appendChild(t);
-            tr.appendChild(td);
-            td = document.createElement('td');
-            t = document.createTextNode(data[i]["bankBranch"]);
-            td.appendChild(t);
-            tr.appendChild(td);
-            td = document.createElement('td');
-            t = document.createTextNode(data[i]["date"]);
-            td.appendChild(t);
-            tr.appendChild(td);
-            td = document.createElement('td');
-            t = document.createTextNode(data[i]["amount"]);
-            td.appendChild(t);
-            tr.appendChild(td);
-            td = document.createElement('td');
-            t = document.createTextNode(data[i]["status"]);
-            td.appendChild(t);
-            tr.appendChild(td);
-
-            table.appendChild(tr);
-        } 
-    }
-
-    var paymentinfo = new XMLHttpRequest();
-    paymentinfo.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-        console.log(paymentinfo.responseText)
-           setBalance(paymentinfo.responseText);
+    });
+    $scope.change = function(id) {
+        id=id[0][0];
+        x = $scope.ids.find( function(el) {
+            if(el == id)
+                return 1;
+        });
+        if(!x) {
+            $scope.ids.push(id);
+        } else {
+            index = $scope.ids.indexOf(id);
+            $scope.ids.splice(index,1);
         }
-    };
-    paymentinfo.open("GET", "/balance", true);
-    paymentinfo.send();
-
-    function setBalance (data){
-        data = JSON.parse(data);
-        var div = document.getElementById('balance');
-        var html = "<p><strong> Amount to be paid : </strong> "+data['amount']+"</p>";
-        html = html + "<p><strong> Amount paid : </strong> "+data['paid']+"</p>";
-        html = html + "<p><strong> Balance amount : </strong> "+( parseInt(data['amount']) - parseInt(data['paid']) )+"</p>";
-        div.innerHTML = html;
+        $scope.amount = $scope.ids.length * 100;
+        $scope.allids = $scope.ids.join(",");
+        console.log($scope.allids);
     }
-
+});
 </script>

@@ -137,6 +137,7 @@ router.post('/addteam', checkloginstate, function(req, res){
 	newTeam.thirdStudent.name = req.body.name3;
 	newTeam.thirdStudent.email = req.body.email3;
 	newTeam.thirdStudent.contact = req.body.num3;
+	newTeam.isPaid = 0;
 	newTeam.save();
 	res.render('dashboard/dashboard',{ layout: "dashboard", message: "Team added successfully", title: "Dashboard" });
 });
@@ -147,6 +148,12 @@ router.get('/viewteams', checkloginstate, function(req, res){
 
 router.get('/getteams', checkloginstate, function(req, res){
 	team.find({ useremail: req.user.email}, function(err, result){
+		res.json(result);
+	})
+});
+
+router.get('/getteams/unpaid', checkloginstate, function(req, res){
+	team.find({ useremail: req.user.email, isPaid: 0}, function(err, result){
 		res.json(result);
 	})
 });
@@ -183,18 +190,47 @@ router.get('/payment', checkloginstate, function(req, res){
 	res.render('dashboard/payment',{ layout: "dashboard", title: "Make a payment" });
 });
 
+router.get('/payment/success', checkloginstate, function(req, res){
+	res.render('dashboard/payment',{ layout: "dashboard", title: "Make a payment", messagesuccess: "Payment added successfully ! Check status for update !" });
+});
+
+router.get('/payment/failed', checkloginstate, function(req, res){
+	res.render('dashboard/payment',{ layout: "dashboard", title: "Make a payment", messageerror: "Payment cannot be made due to invalid entries ! Please read instructions carefully" });
+});
+
 router.post('/payment', checkloginstate, function(req, res){
-	var newPayment = new payment();
-	newPayment.email = req.user.email;
-	newPayment.transactionId = req.body.txn;
-	newPayment.date = req.body.date;
-	newPayment.mode = req.body.mode;
-	newPayment.amount = req.body.amount;
-	newPayment.bankName = req.body.bname;
-	newPayment.bankBranch = req.body.branch;
-	newPayment.status = "Pending";
-	newPayment.save();
-	res.render('dashboard/payment',{ layout: "dashboard", message: "Payment added successfully. Please wait for approval", title: "Payment portal" });
+	if(req.body.amount != 0 && req.body.amount / 100 == req.body.ids.split(",").length ) {
+		var newPayment = new payment();
+		newPayment.email = req.user.email;
+		newPayment.transactionId = req.body.txn;
+		newPayment.date = req.body.date;
+		newPayment.mode = req.body.mode;
+		newPayment.amount = req.body.amount;
+		newPayment.bankName = req.body.bname;
+		newPayment.bankBranch = req.body.branch;
+		newPayment.status = "Pending";
+		newPayment.teamIds = req.body.ids.split(",");
+		newPayment.save();
+		console.log("1");
+		i=0;
+		next();
+
+		function next() {
+			var objectId = mongoose.Types.ObjectId(newPayment.teamIds[i]);
+			team.updateOne({'_id': objectId}, {'isPaid': 1 }, function(err){
+				if( i+1 < newPayment.teamIds.length){
+					i++;
+					next();
+					console.log("2");
+				} else {
+					console.log("3");
+					res.redirect("/payment/success");
+				}
+			});
+		}
+	} else {
+		res.redirect("/payment/failed");
+	}
 });
 
 router.get('/getpayments', checkloginstate, function(req, res){
@@ -220,56 +256,6 @@ router.get('/balance', checkloginstate, function(req, res){
 });
 
 //routes for admin
-// router.get('/admin/login', adminLogin, function(req, res) {
-// 	res.render('admin/login')
-// })
-// router.post('/admin/verify', passport.authenticate('admin/login', {
-// 	successRedirect : '../admin/dashboard', // redirect to the secure profile section
-// 	failureRedirect : '../admin/loginfailed', // redirect back to the signup page if there is an error
-// 	failureFlash : true // allow flash messages
-// }));
-// router.get('/admin/loginfailed', function(req, res) {
-// 	res.redirect('../admin/login')
-// })
-// router.get('/admin/dashboard', adminLoginStatus, function(req, res){
-// 	res.render('admin/dashboard');
-// });
-// router.get('/admin/getPaymentStatus', adminLoginStatus, function(req, res) {
-// 	user.find({}, function(err, result) {
-// 		res.json(result)
-// 	})
-// })
-// router.post('/admin/updateStatus', adminLoginStatus, function(req, res) {
-// 	user.updateOne({'_id': req.body.id}, {'paymentConfirmation': req.body.selected}, function(err) {
-// 		if(err) {
-// 			console.log('ooops')
-// 		}
-// 	})
-// })
-// router.post('/admin/addUser', adminLoginStatus, function(req, res) {
-// 	var newUser = new user()
-// 	newUser.email = req.body.email
-// 	newUser.password = req.body.password
-// 	newUser.save()
-// })
-
-// function adminLoginStatus(req, res, next) {
-
-//   if (!req.isAuthenticated()) {
-//     res.redirect('/admin/login');
-//   }
-//   else
-//     return next();
-// }
-
-// function adminLogin(req, res, next) {
-// 	if (req.isAuthenticated()) {
-// 		res.redirect('/admin/dashboard');
-//   	}
-//   	else
-//     	return next();
-// }
-
 
 router.get('/admin/login', adminLogin, function(req, res) {
 	res.render('admin/login')
@@ -281,25 +267,11 @@ router.post('/admin/verify', passport.authenticate('admin/login', {
 }));
 router.get('/admin/loginfailed', function(req, res) {
 	res.render('admin/login',{ message: "Wrong credentials" })
-})
+});
+
 router.get('/admin/dashboard', adminLoginStatus, function(req, res){
 	res.render('admin/dashboard', { layout: "adminnew"});
 });
-
-router.get('/admin/getPaymentStatus', adminLoginStatus, function(req, res) {
-	user.find({}, function(err, result) {
-		res.json(result)
-	})
-})
-
-router.post('/admin/updateStatus', adminLoginStatus, function(req, res) {
-	payment.updateOne({'_id': req.body.id}, {'paymentConfirmation': req.body.selected}, function(err) {
-		if(err) {
-			console.log('ooops')
-		} else {
-		}
-	})
-})
 
 router.post('/admin/adduser', adminLoginStatus, function(req, res) {
 	user.find({ email: req.body.email }, function( err, result){
@@ -344,15 +316,47 @@ router.get('/admin/getpayments', adminLoginStatus, function(req, res) {
 	});
 });
 
-router.get('/admin/updateStatus/id=:id&&value=:value', adminLoginStatus, function(req, res) {
-
+router.get('/admin/updateStatus/id=:id&&value=:value',  function(req, res) {
 	var objectId = mongoose.Types.ObjectId(req.params.id);
 	payment.updateOne({'_id': objectId},{ 'status': req.params.value}, function(err) {
 		if(err) {
 			console.log(err);
 			res.send("error");
 		} else {
-			res.send("success");
+			payment.findOne({'_id': objectId}, function(err, result) {
+				var tid = result["teamIds"];
+				var s = 3;
+				if( req.params.value == 'Verified') {
+					s = 2;
+				} else if ( req.params.value == 'Pending') {
+					s = 1;
+				} else if ( req.params.value == 'Unsuccessful') {
+					s = 0;
+				}
+				if(s != 3){
+					i = 0;
+					next(i);
+					function next(i){
+						objectId = mongoose.Types.ObjectId(tid[i]);
+						team.updateOne({'_id': objectId},{ 'isPaid': s}, function(err){
+							if(err) {
+								console.log(err);
+							} else {
+								if( i+1 < tid.length){
+									i++;
+									next(i);
+								} else {
+									res.send("success");
+								}
+							}
+						});
+					}
+				} else {
+					res.send("success");
+				}
+
+			})
+
 		}
 	});
 });
@@ -385,3 +389,8 @@ function adminLogin(req, res, next) {
   	else
     	return next();
 }
+
+router.get('/logout', function(req, res) {
+	req.logout();
+	res.redirect('/');
+});

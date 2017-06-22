@@ -20,7 +20,8 @@ var teamSchema = new Schema({
     name: String,
     contact: String,
     email: String
-  }
+  },
+  isPaid: Number
 });
 
 

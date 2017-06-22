@@ -11,7 +11,8 @@ var paymentschema = new Schema({
   amount: String,
   transactionId: String,
   date: String,
-  status: String
+  status: String,
+  teamIds: Array
 });
 
 
