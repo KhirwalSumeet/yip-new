@@ -36,6 +36,10 @@ router.get('/rules', function (req, res, next) {
   res.render('rules');
 });
 
+router.get('/awards', function (req, res, next) {
+  res.render('awards');
+});
+
 router.post('/login', passport.authenticate('login', {
 	successRedirect : '/dashboard', // redirect to the secure profile section
 	failureRedirect : '/loginfailed', // redirect back to the signup page if there is an error
