@@ -21,7 +21,8 @@ var teamSchema = new Schema({
     contact: String,
     email: String
   },
-  isPaid: Number
+  isPaid: Number,
+  submitted: Number
 });
 
 

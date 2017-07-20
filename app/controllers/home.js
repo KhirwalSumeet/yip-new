@@ -6,12 +6,15 @@ var express = require('express'),
 var passport = require('passport');
 var flash    = require('connect-flash');
 var session = require('express-session');
+var fileUpload = require('express-fileupload');
+
 router.use(passport.initialize());
 
 router.use(session({ secret: 'barc2017@KGP' ,saveUninitialized: false, resave: false})); // session secret
 router.use(passport.initialize());
 router.use(passport.session()); // persistent login sessions
 router.use(flash());
+router.use(fileUpload());
 var user = require('../models/user');
 var team = require('../models/team');
 var payment = require('../models/payments');
@@ -376,6 +379,32 @@ router.get('/getlatestpays', checkloginstate, function(req, res) {
 	payment.find({ email: req.user.email}, null, {sort: {'_id': -1}, limit: 3}, function(err, result){
 		res.json(result);
 	})
+})
+
+router.post('/submission/id=:id', checkloginstate, function(req, res) {
+	if (!req.files)
+    return res.status(400).send('No files were uploaded.');
+  var sampleFile = req.files.sampleFile;
+  var name = sampleFile.name.split('.')
+  var extension = name[name.length - 1].toLowerCase()
+  if (extension != 'pdf') {
+  	res.send('Please upload the file in .pdf format.')
+  } else {
+	  sampleFile.mv('./uploads/'+req.body.teamId+'.'+extension, function(err) {
+	    if (err){
+	      return res.status(500).send(err);
+	    } else {
+	    	team.updateOne({'_id': req.body.teamId}, {'submitted': 1 }, function(err) {
+	    		if (err) {
+	    			return res.send('Something went wrong. Try after sometime.')
+	    		} else {
+	    			res.send('File uploaded!');
+	    		}
+	    	})
+	    }
+
+	  });
+  }
 })
 
 function adminLoginStatus(req, res, next) {

@@ -20,6 +20,7 @@
                 <th>Email</th>
                 <th>Contact</th>
                 <th>Payment Status</th>
+                <th>Submission</th>
                 <th></th>
             </tr>
         </thead>
@@ -36,14 +37,40 @@
             <td> [[ x.thirdStudent.email ]] </td>
             <td> [[ x.thirdStudent.contact ]] </td>
             <td> [[ x.isPaid ]] </td>
+            <td> <a ng-if="x.isPaid == 'Paid' && x.submitted != 1" ng-click="upload([[x._id]])">Upload</a><a ng-if="x.submitted == 1" ng-click="upload([[x._id]])">Update</a> </td>
             <td> <button ng-click="edit([[x._id]])">Edit</button> </td>
             </tr>
         </tbody>
     </table>
 </div>
+<div id="submit-mod" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Upload Abstract</h4>
+      </div>
+      <form id="data" method="post" enctype="multipart/form-data">
+          <div class="modal-body">
+            <input type="hidden" name="teamId" id="teamId">
+            <input type="file" name="sampleFile" id="fileUp" required />
+            <div class="col s12 center-align">
+                <p id="up-status"></p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <input class="btn btn-default btn-success" type="submit" value="Upload" id="upload-btn">
+            <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
+          </div>
+      </form>
+    </div>
+
+  </div>
+</div>
 </div>
 
 <script>
+var flagUp, dots = 0
 app.controller("teams", function($scope) {
     $.get("/getteams",function(data){
         for(i=0; i<data.length; i++) {
@@ -62,5 +89,50 @@ app.controller("teams", function($scope) {
     $scope.edit = function(id) {
     	location.assign('/editteam/id='+id);
     }
+
+    $scope.upload = function(id) {
+        $('#teamId').val(id)
+        $('#upload-btn').attr('data-id', id)
+        $('#submit-mod').modal('show')
+    }
 });
+
+// $('#upload-btn').click(function() {
+//     $.post('/submission/id=' + $(this).data('id'), {data: $('#fileUp')})
+//     console.log($(this).data('id'))
+// })
+
+$("form#data").submit(function(){
+    $('#upload-btn').attr('disabled', true)
+    dots = 0
+    flagUp = setInterval(uploading, 300)
+    uploading()
+    var teamId = $('#upload-btn').data('id')
+    var formData = new FormData(this);
+    $.ajax({
+        url: '/submission/id=' + teamId,
+        type: 'POST',
+        data: formData,
+        async: false,
+        success: function (data) {
+            clearInterval(flagUp)
+        $('#upload-btn').attr('disabled', false)
+            $('#up-status').text(data)
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
+
+    return false;
+});
+
+function uploading() {
+    if (dots % 4) {
+        document.getElementById('up-status').innerText += '.'
+    } else {
+        document.getElementById('up-status').innerText = 'Uploading'
+    }
+    dots++
+}
 </script>
