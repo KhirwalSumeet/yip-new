@@ -392,11 +392,11 @@ router.post('/submission/id=:id', checkloginstate, function(req, res) {
   } else {
 	  sampleFile.mv('./uploads/'+req.body.teamId+'.'+extension, function(err) {
 	    if (err){
-	      return res.status(500).send(err);
+	      return res.status(500).send('Something went wrong. Try after sometime.');
 	    } else {
 	    	team.updateOne({'_id': req.body.teamId}, {'submitted': 1 }, function(err) {
 	    		if (err) {
-	    			return res.send('Something went wrong. Try after sometime.')
+	    			return res.status(500).send('Something went wrong. Try after sometime.')
 	    		} else {
 	    			res.send('File uploaded!');
 	    		}
