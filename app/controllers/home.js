@@ -1,13 +1,13 @@
 var express = require('express'),
   router = express.Router(),
   mongoose = require('mongoose');
+var fs = require('fs');
 
 //Passport Declaration
 var passport = require('passport');
 var flash    = require('connect-flash');
 var session = require('express-session');
 var fileUpload = require('express-fileupload');
-
 router.use(passport.initialize());
 
 router.use(session({ secret: 'barc2017@KGP' ,saveUninitialized: false, resave: false})); // session secret
@@ -382,6 +382,9 @@ router.get('/getlatestpays', checkloginstate, function(req, res) {
 })
 
 router.post('/submission/id=:id', checkloginstate, function(req, res) {
+  	if (!fs.existsSync('./uploads')) {
+  		fs.mkdirSync('./uploads')
+  	}
 	if (!req.files)
     return res.status(400).send('No files were uploaded.');
   var sampleFile = req.files.sampleFile;
