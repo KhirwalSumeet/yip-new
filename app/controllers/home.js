@@ -386,7 +386,7 @@ router.post('/submission/id=:id', checkloginstate, function(req, res) {
   		fs.mkdirSync('./uploads')
   	}
 	if (!req.files)
-    return res.status(400).send('No files were uploaded.');
+    	return res.status(400).send('No files were uploaded.');
   var sampleFile = req.files.sampleFile;
   var name = sampleFile.name.split('.')
   var extension = name[name.length - 1].toLowerCase()
@@ -401,7 +401,7 @@ router.post('/submission/id=:id', checkloginstate, function(req, res) {
 	    		if (err) {
 	    			return res.status(500).send('Something went wrong. Try after sometime.')
 	    		} else {
-	    			res.send('File uploaded!');
+	    			res.status(200).send('File uploaded!');
 	    		}
 	    	})
 	    }

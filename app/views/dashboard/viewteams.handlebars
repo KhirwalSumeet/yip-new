@@ -20,7 +20,7 @@
                 <th>Email</th>
                 <th>Contact</th>
                 <th>Payment Status</th>
-                <!-- <th>Submission</th> -->
+                <th>Submission</th>
                 <th></th>
             </tr>
         </thead>
@@ -37,13 +37,13 @@
             <td> [[ x.thirdStudent.email ]] </td>
             <td> [[ x.thirdStudent.contact ]] </td>
             <td> [[ x.isPaid ]] </td>
-            <!-- <td> <a ng-if="x.isPaid == 'Paid' && x.submitted != 1" ng-click="upload([[x._id]])">Upload</a><a ng-if="x.submitted == 1" ng-click="upload([[x._id]])">Update</a> </td> -->
+            <td> <a ng-if="x.isPaid == 'Paid' && x.submitted != 1" style="cursor: pointer;" ng-click="upload([[x._id]])">Upload</a><a style="cursor: pointer;" ng-if="x.submitted == 1" ng-click="upload([[x._id]])">Update</a> </td>
             <td> <button ng-click="edit([[x._id]])">Edit</button> </td>
             </tr>
         </tbody>
     </table>
 </div>
-<!-- <div id="submit-mod" class="modal fade" role="dialog">
+<div id="submit-mod" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -60,13 +60,13 @@
           </div>
           <div class="modal-footer">
             <input class="btn btn-default btn-success" type="submit" value="Upload" id="upload-btn">
-            <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
+            <button type="button" id="modalClose" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
           </div>
       </form>
     </div>
 
   </div>
-</div> -->
+</div>
 </div>
 
 <script>
@@ -97,37 +97,46 @@ app.controller("teams", function($scope) {
     }
 });
 
-// $("form#data").submit(function(){
-//     $('#upload-btn').attr('disabled', true)
-//     dots = 0
-//     flagUp = setInterval(uploading, 300)
-//     uploading()
-//     var teamId = $('#upload-btn').data('id')
-//     var formData = new FormData(this);
-//     $.ajax({
-//         url: '/submission/id=' + teamId,
-//         type: 'POST',
-//         data: formData,
-//         async: false,
-//         success: function (data) {
-//             clearInterval(flagUp)
-//         $('#upload-btn').attr('disabled', false)
-//             $('#up-status').text(data)
-//         },
-//         cache: false,
-//         contentType: false,
-//         processData: false
-//     });
+$("form#data").submit(function(){
+    $('#upload-btn').attr('disabled', true)
+    dots = 0
+    flagUp = setInterval(uploading, 300)
+    uploading()
+    var teamId = $('#upload-btn').data('id')
+    var formData = new FormData(this);
+    $.ajax({
+        url: '/submission/id=' + teamId,
+        type: 'POST',
+        data: formData,
+        async: false,
+        success: function (data) {
+            clearInterval(flagUp)
+            $('#fileUp').val('')
+            $('a[ng-click="upload(' + teamId + ')"]').text('Update')
+            $('#upload-btn').attr('disabled', false)
+            $('#up-status').text(data)
+        },
+        error: function(data){
+            clearInterval(flagUp)
+            $('#fileUp').val('')
+            $('#upload-btn').attr('disabled', false)
+            $('#up-status').text(data)
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
 
-//     return false;
-// });
+    return false;
+});
 
-// function uploading() {
-//     if (dots % 4) {
-//         document.getElementById('up-status').innerText += '.'
-//     } else {
-//         document.getElementById('up-status').innerText = 'Uploading'
-//     }
-//     dots++
-// }
+function uploading() {
+    if (dots % 4) {
+        document.getElementById('up-status').innerText += '.'
+    } else {
+        document.getElementById('up-status').innerText = 'Uploading'
+    }
+    dots++
+}
+
 </script>
