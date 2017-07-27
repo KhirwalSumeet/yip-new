@@ -155,7 +155,6 @@
 	var xhttp2 = new XMLHttpRequest();
     xhttp2.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-        console.log(xhttp2.responseText)
            setTable(xhttp2.responseText);
         }
     };
@@ -163,7 +162,6 @@
     xhttp2.send();
     function setTable(data) {
         data = JSON.parse(data);
-        console.log(data.length);
         var table = document.getElementById('recent-payments');
         for( i=0; i<data.length; i++ ) {
             var tr = document.createElement('tr');
