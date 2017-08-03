@@ -423,7 +423,7 @@ router.get('/admin/viewteams', adminLoginStatus, function(req, res, next) {
 
 router.get('/admin/getcsv/teams', adminLoginStatus, function(req, res, next) {
 	team.find({}, null, {sort: {useremail: 1}}, function(err, data) {
-		var fields = ['useremail', 'name', 'submission', 'isPaid', 'firstStudent.name', 'firstStudent.email', 'firstStudent.contact', 'secondStudent.name', 'secondStudent.email', 'secondStudent.contact', 'thirdStudent.name', 'thirdStudent.email', 'thirdStudent.contact'];
+		var fields = ['useremail', 'name', 'submitted', 'isPaid', 'firstStudent.name', 'firstStudent.email', 'firstStudent.contact', 'secondStudent.name', 'secondStudent.email', 'secondStudent.contact', 'thirdStudent.name', 'thirdStudent.email', 'thirdStudent.contact'];
 		var csv = json2csv({ data: data, fields: fields });
 
 		fs.writeFile('teams.csv', csv, function(err) {
@@ -437,6 +437,16 @@ router.get('/admin/getcsv/teams', adminLoginStatus, function(req, res, next) {
 		})
 	})
 
+})
+
+router.get('/admin/getsubmission/id=:id', adminLoginStatus, function(req, res, next) {
+	var path = './uploads/' + req.params.id + '.pdf';
+	if (fs.existsSync(path)) {
+		res.download(path)
+		res.status(200)
+	} else {
+		res.status(500)
+	}
 })
 
 function adminLoginStatus(req, res, next) {

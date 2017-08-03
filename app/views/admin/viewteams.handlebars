@@ -58,7 +58,7 @@
         var table = document.getElementById('tbody');
         var submission, payment;
         for( i=0; i<data.length; i++ ) {
-            submission = data[i]["submission"] == 1 ? "Yes" : "No";
+            submission = data[i]["submitted"] || 'No'
             if(data[i]["isPaid"] == 2)
                 payment = "Paid";
             else if(data[i]["isPaid"] == 1)
@@ -75,7 +75,13 @@
             td.appendChild(t);
             tr.appendChild(td);
             td = document.createElement('td');
-            t = document.createTextNode(submission);
+            if (submission == 1) {
+                t = document.createElement('a');
+                t.setAttribute('href', "/admin/getsubmission/id=" + data[i]["_id"]);
+                t.innerText = 'Download';
+            } else {
+                t = document.createTextNode(submission);
+            }
             td.appendChild(t);
             tr.appendChild(td);
             td = document.createElement('td');
