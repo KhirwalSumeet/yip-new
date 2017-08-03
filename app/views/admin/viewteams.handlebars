@@ -1,0 +1,126 @@
+{{#if messageerror}}
+<div class="alert alert-danger">
+	<strong>{{messageerror}}</strong>
+</div>
+{{/if}}
+{{#if messagesuccess}}
+<div class="alert alert-success">
+	<strong>{{messagesuccess}}</strong>
+</div>
+{{/if}}
+<div class="row">
+    <div class="col-lg-12">
+        <h2 style="display: flex; align-items: center;">All Teams <span style="margin-left: 20px;font-size: 15px;"><a href="/admin/getcsv/teams">Download data</a></span></h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Coordinating teacher</th>
+                        <th>Team Name</th>
+                        <th>Submission</th>
+                        <th>Payment</th>
+                        <th>Student 1</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Student 2</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Student 3</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody id='tbody'>
+
+                </tbody>
+            </table>
+            <br><Br>
+            <div id="balance"></div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+<script>
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        console.log(xhttp.responseText)
+           setTable(xhttp.responseText);
+        }
+    };
+    xhttp.open("GET", "/admin/getteams", true);
+    xhttp.send();
+
+    function setTable(data) {
+        data = JSON.parse(data);
+        // console.log(data.length);
+        var table = document.getElementById('tbody');
+        var submission, payment;
+        for( i=0; i<data.length; i++ ) {
+            submission = data[i]["submission"] == 1 ? "Yes" : "No";
+            if(data[i]["isPaid"] == 2)
+                payment = "Paid";
+            else if(data[i]["isPaid"] == 1)
+                payment = "Payment in process";
+            else
+                payment = "Not Paid";
+            var tr = document.createElement('tr');
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["useremail"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["name"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(submission);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(payment);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["firstStudent"]["name"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["firstStudent"]["contact"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["firstStudent"]["email"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["secondStudent"]["name"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["secondStudent"]["contact"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["secondStudent"]["email"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["thirdStudent"]["name"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["thirdStudent"]["contact"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            td = document.createElement('td');
+            t = document.createTextNode(data[i]["thirdStudent"]["email"]);
+            td.appendChild(t);
+            tr.appendChild(td);
+            table.appendChild(tr);
+
+        }
+    }
+
+</script>

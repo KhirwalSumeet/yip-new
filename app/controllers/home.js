@@ -2,6 +2,7 @@ var express = require('express'),
   router = express.Router(),
   mongoose = require('mongoose');
 var fs = require('fs');
+var json2csv = require('json2csv');
 
 //Passport Declaration
 var passport = require('passport');
@@ -408,6 +409,34 @@ router.post('/submission/id=:id', checkloginstate, function(req, res) {
 
 	  });
   }
+})
+
+router.get('/admin/getteams', adminLoginStatus, function(req, res, next) {
+	team.find({}, null, {sort: {useremail: 1}}, function(err, data) {
+		res.json(data);
+	})
+})
+
+router.get('/admin/viewteams', adminLoginStatus, function(req, res, next) {
+	res.render('admin/viewteams.handlebars', {layout: 'adminnew'})
+})
+
+router.get('/admin/getcsv/teams', adminLoginStatus, function(req, res, next) {
+	team.find({}, null, {sort: {useremail: 1}}, function(err, data) {
+		var fields = ['useremail', 'name', 'submission', 'isPaid', 'firstStudent.name', 'firstStudent.email', 'firstStudent.contact', 'secondStudent.name', 'secondStudent.email', 'secondStudent.contact', 'thirdStudent.name', 'thirdStudent.email', 'thirdStudent.contact'];
+		var csv = json2csv({ data: data, fields: fields });
+
+		fs.writeFile('teams.csv', csv, function(err) {
+			if (err) {
+				console.log(err);
+				res.status(500);
+			} else {
+				res.download('teams.csv');
+				res.status(200);
+			}
+		})
+	})
+
 })
 
 function adminLoginStatus(req, res, next) {
