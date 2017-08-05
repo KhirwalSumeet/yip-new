@@ -439,6 +439,23 @@ router.get('/admin/getcsv/teams', adminLoginStatus, function(req, res, next) {
 
 })
 
+router.get('/admin/getcsv/teacherdetails', adminLoginStatus, function(req, res, next) {
+	user.find({}, null, {sort: {email: 1}}, function(err, data) {
+		var fields = ['email', 'details.teacher.name', 'details.teacher.email', 'details.teacher.contact', 'details.principal.name', 'details.principal.email', 'details.principal.contact', 'details.school.address', 'details.school.contact', 'details.school.city', 'details.school.state'];
+		var csv = json2csv({ data: data, fields: fields });
+
+		fs.writeFile('teacherdetails.csv', csv, function(err) {
+			if (err) {
+				console.log(err);
+				res.status(500);
+			} else {
+				res.download('teacherdetails.csv');
+				res.status(200);
+			}
+		})
+	})
+})
+
 router.get('/admin/getsubmission/id=:id', adminLoginStatus, function(req, res, next) {
 	var path = './uploads/' + req.params.id + '.pdf';
 	if (fs.existsSync(path)) {
@@ -448,6 +465,7 @@ router.get('/admin/getsubmission/id=:id', adminLoginStatus, function(req, res, n
 		res.status(500)
 	}
 })
+
 
 function adminLoginStatus(req, res, next) {
 
