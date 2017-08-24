@@ -466,6 +466,16 @@ router.get('/admin/getsubmission/id=:id', adminLoginStatus, function(req, res, n
 	}
 })
 
+router.get('/user/getsubmission/id=:id', checkloginstate, function(req, res, next) {
+	var path = './uploads/' + req.params.id + '.pdf';
+	if (fs.existsSync(path)) {
+		res.download(path)
+		res.status(200)
+	} else {
+		res.status(500)
+	}
+})
+
 
 function adminLoginStatus(req, res, next) {
 

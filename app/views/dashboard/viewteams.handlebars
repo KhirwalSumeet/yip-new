@@ -37,7 +37,7 @@
             <td> [[ x.thirdStudent.email ]] </td>
             <td> [[ x.thirdStudent.contact ]] </td>
             <td> [[ x.isPaid ]] </td>
-            <td> <a ng-if="x.isPaid == 'Paid' && x.submitted != 1" style="cursor: pointer;" ng-click="upload([[x._id]])">Upload</a><a style="cursor: pointer;" ng-if="x.submitted == 1" ng-click="upload([[x._id]])">Update</a> </td>
+            <td> <a ng-if="x.isPaid == 'Paid' && x.submitted != 1" style="cursor: pointer;" ng-click="upload([[x._id]])">Upload</a><a style="cursor: pointer;" ng-if="x.submitted == 1" ng-click="upload([[x._id]])">Update</a><a style="cursor: pointer;" ng-if="x.submitted == 1" href="/user/getsubmission/id=[[x._id]]"> / View</a> </td>
             <td> <button ng-click="edit([[x._id]])">Edit</button> </td>
             </tr>
         </tbody>
