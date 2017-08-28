@@ -17,6 +17,7 @@
                     <tr>
                         <th>Coordinating teacher</th>
                         <th>Team Name</th>
+                        <th>Next round</th>
                         <th>Submission</th>
                         <th>Payment</th>
                         <th>Student 1</th>
@@ -74,6 +75,14 @@
             t = document.createTextNode(data[i]["name"]);
             td.appendChild(t);
             tr.appendChild(td);
+            td = document.createElement('td')
+            if (data[i]["next"] == 1) {
+                t = '<select class="nextOpt" onchange="updateStat(\''+data[i]["_id"]+'\', this)"><option selected>Yes</option><option>No</option></select>'
+            } else {
+                t = '<select class="nextOpt" onchange="updateStat(\''+data[i]["_id"]+'\', this)"><option>Yes</option><option selected>No</option></select>'
+            }
+            td.innerHTML += t
+            tr.appendChild(td)
             td = document.createElement('td');
             if (submission == 1) {
                 t = document.createElement('a');
@@ -129,4 +138,23 @@
         }
     }
 
+    function updateStat(data, elem) {
+        var num = 0
+        if (elem.value.toLowerCase() == "yes") {
+            num = 1
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/admin/nextround/'+data+'/'+num, true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.send();
+        xhr.onload = function () {
+            // do something to response
+            if(this.status == 500) {
+                alert("something went wrong")
+                elem.parentNode.style.background = "lightred"
+            } else if (this.status == 200) {
+                elem.parentNode.style.background = "lightgreen"
+            };
+        };
+    }
 </script>

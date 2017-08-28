@@ -456,6 +456,16 @@ router.get('/admin/getcsv/teacherdetails', adminLoginStatus, function(req, res, 
 	})
 })
 
+router.post('/admin/nextround/:id/:num', adminLoginStatus, function(req, res, next) {
+	team.updateOne({"_id": req.params.id}, {"next": req.params.num}, function(err) {
+		if (err) {
+			res.status(500).send("Something went wrong")
+		} else {
+			res.status(200).send("Updated")
+		}
+	})
+})
+
 router.get('/admin/getsubmission/id=:id', adminLoginStatus, function(req, res, next) {
 	var path = './uploads/' + req.params.id + '.pdf';
 	if (fs.existsSync(path)) {

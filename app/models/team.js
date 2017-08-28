@@ -6,6 +6,7 @@ var mongoose = require('mongoose'),
 var teamSchema = new Schema({
   useremail: String,
   name: String,
+  next: Number,
   firstStudent: {
     name: String,
     contact: String,
