@@ -7,6 +7,7 @@ var teamSchema = new Schema({
   useremail: String,
   name: String,
   next: Number,
+  nextSub: Number,
   firstStudent: {
     name: String,
     contact: String,

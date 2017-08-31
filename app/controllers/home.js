@@ -383,8 +383,8 @@ router.get('/getlatestpays', checkloginstate, function(req, res) {
 })
 
 router.post('/submission/id=:id', checkloginstate, function(req, res) {
-  	if (!fs.existsSync('./uploads')) {
-  		fs.mkdirSync('./uploads')
+  	if (!fs.existsSync('./uploads/r2')) {
+  		fs.mkdirSync('./uploads/r2')
   	}
 	if (!req.files)
     	return res.status(400).send('No files were uploaded.');
@@ -394,11 +394,11 @@ router.post('/submission/id=:id', checkloginstate, function(req, res) {
   if (extension != 'pdf') {
   	res.send('Please upload the file in .pdf format.')
   } else {
-	  sampleFile.mv('./uploads/'+req.body.teamId+'.'+extension, function(err) {
+	  sampleFile.mv('./uploads/r2/'+req.body.teamId+'.'+extension, function(err) {
 	    if (err){
 	      return res.status(500).send('Something went wrong. Try after sometime.');
 	    } else {
-	    	team.updateOne({'_id': req.body.teamId}, {'submitted': 1 }, function(err) {
+	    	team.updateOne({'_id': req.body.teamId}, {'nextSub': 1 }, function(err) {
 	    		if (err) {
 	    			return res.status(500).send('Something went wrong. Try after sometime.')
 	    		} else {
@@ -486,6 +486,16 @@ router.get('/user/getsubmission/id=:id', checkloginstate, function(req, res, nex
 	}
 })
 
+
+router.get('/user/getsubmission/r2/id=:id', checkloginstate, function(req, res, next) {
+	var path = './uploads/r2/' + req.params.id + '.pdf';
+	if (fs.existsSync(path)) {
+		res.download(path)
+		res.status(200)
+	} else {
+		res.status(500)
+	}
+})
 
 function adminLoginStatus(req, res, next) {
 
