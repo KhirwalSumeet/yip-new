@@ -196,15 +196,15 @@ router.post('/editteam/id=:id', checkloginstate, function(req, res){
 });
 
 router.get('/payment', checkloginstate, function(req, res){
-	res.render('dashboard/payment',{ layout: "dashboard", title: "Make a payment" });
+	res.render('dashboard/payment',{ layout: "dashboard", title: "Payments made" });
 });
 
 router.get('/payment/success', checkloginstate, function(req, res){
-	res.render('dashboard/payment',{ layout: "dashboard", title: "Make a payment", messagesuccess: "Payment added successfully ! Check status for update !" });
+	res.render('dashboard/payment',{ layout: "dashboard", title: "Payments made", messagesuccess: "Payment added successfully ! Check status for update !" });
 });
 
 router.get('/payment/failed', checkloginstate, function(req, res){
-	res.render('dashboard/payment',{ layout: "dashboard", title: "Make a payment", messageerror: "Payment cannot be made due to invalid entries ! Please read instructions carefully" });
+	res.render('dashboard/payment',{ layout: "dashboard", title: "Payments made", messageerror: "Payment cannot be made due to invalid entries ! Please read instructions carefully" });
 });
 
 router.post('/payment', checkloginstate, function(req, res){
