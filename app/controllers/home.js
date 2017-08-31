@@ -133,23 +133,23 @@ router.get('/addteam', checkloginstate, function(req, res){
 	res.render('dashboard/addteam',{ layout: "dashboard", title: "Add New Team" });
 });
 
-router.post('/addteam', checkloginstate, function(req, res){
-	var newTeam = new team();
-	newTeam.useremail = req.user.email;
-	newTeam.name = req.body.tname;
-	newTeam.firstStudent.name = req.body.name1;
-	newTeam.firstStudent.email = req.body.email1;
-	newTeam.firstStudent.contact = req.body.num1;
-	newTeam.secondStudent.name = req.body.name2;
-	newTeam.secondStudent.email = req.body.email2;
-	newTeam.secondStudent.contact = req.body.num2;
-	newTeam.thirdStudent.name = req.body.name3;
-	newTeam.thirdStudent.email = req.body.email3;
-	newTeam.thirdStudent.contact = req.body.num3;
-	newTeam.isPaid = 0;
-	newTeam.save();
-	res.render('dashboard/dashboard',{ layout: "dashboard", message: "Team added successfully", title: "Dashboard" });
-});
+// router.post('/addteam', checkloginstate, function(req, res){
+// 	var newTeam = new team();
+// 	newTeam.useremail = req.user.email;
+// 	newTeam.name = req.body.tname;
+// 	newTeam.firstStudent.name = req.body.name1;
+// 	newTeam.firstStudent.email = req.body.email1;
+// 	newTeam.firstStudent.contact = req.body.num1;
+// 	newTeam.secondStudent.name = req.body.name2;
+// 	newTeam.secondStudent.email = req.body.email2;
+// 	newTeam.secondStudent.contact = req.body.num2;
+// 	newTeam.thirdStudent.name = req.body.name3;
+// 	newTeam.thirdStudent.email = req.body.email3;
+// 	newTeam.thirdStudent.contact = req.body.num3;
+// 	newTeam.isPaid = 0;
+// 	newTeam.save();
+// 	res.render('dashboard/dashboard',{ layout: "dashboard", message: "Team added successfully", title: "Dashboard" });
+// });
 
 router.get('/viewteams', checkloginstate, function(req, res){
 	res.render('dashboard/viewteams',{ layout: "dashboard", title: "Your Teams" });
