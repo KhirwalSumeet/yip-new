@@ -466,6 +466,16 @@ router.post('/admin/nextround/:id/:num', adminLoginStatus, function(req, res, ne
 	})
 })
 
+router.post('/admin/round3/:id/:num', adminLoginStatus, function(req, res, next) {
+	team.updateOne({"_id": req.params.id}, {"round3": req.params.num}, function(err) {
+		if (err) {
+			res.status(500).send("Something went wrong")
+		} else {
+			res.status(200).send("Updated")
+		}
+	})
+})
+
 router.get('/admin/getsubmission/id=:id', adminLoginStatus, function(req, res, next) {
 	var path = './uploads/' + req.params.id + '.pdf';
 	if (fs.existsSync(path)) {
@@ -508,7 +518,17 @@ router.get('/user/getsubmission/r2/id=:id', checkloginstate, function(req, res, 
 })
 
 router.get('/round3', checkloginstate, function(req, res, next) {
-	res.render('/dashboard/round3')
+	res.render('dashboard/round3.handlebars', { layout: "dashboard", title: "Round 3" })
+})
+
+router.get('/getteams/r3', checkloginstate, function(req, res, next) {
+	teams.find({"round3": 1}, function(err, data) {
+		if (err) {
+			res.send("Something went wrong. Try again.").status(500)
+		} else {
+			res.json(data)
+		}
+	})
 })
 
 function adminLoginStatus(req, res, next) {
