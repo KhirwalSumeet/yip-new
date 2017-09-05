@@ -476,6 +476,16 @@ router.get('/admin/getsubmission/id=:id', adminLoginStatus, function(req, res, n
 	}
 })
 
+router.get('/admin/getsubmission/r2/id=:id', adminLoginStatus, function(req, res, next) {
+	var path = './uploads/r2/' + req.params.id + '.pdf';
+	if (fs.existsSync(path)) {
+		res.download(path)
+		res.status(200)
+	} else {
+		res.status(500)
+	}
+})
+
 router.get('/user/getsubmission/id=:id', checkloginstate, function(req, res, next) {
 	var path = './uploads/' + req.params.id + '.pdf';
 	if (fs.existsSync(path)) {
@@ -495,6 +505,10 @@ router.get('/user/getsubmission/r2/id=:id', checkloginstate, function(req, res, 
 	} else {
 		res.status(500)
 	}
+})
+
+router.get('/round3', checkloginstate, function(req, res, next) {
+	res.render('/dashboard/round3')
 })
 
 function adminLoginStatus(req, res, next) {

@@ -18,6 +18,7 @@
                         <th>Coordinating teacher</th>
                         <th>Team Name</th>
                         <th>Next round</th>
+                        <th>Round 2 submission</th>
                         <th>Submission</th>
                         <th>Payment</th>
                         <th>Student 1</th>
@@ -57,9 +58,10 @@
         data = JSON.parse(data);
         // console.log(data.length);
         var table = document.getElementById('tbody');
-        var submission, payment;
+        var submission, payment, nextSub;
         for( i=0; i<data.length; i++ ) {
             submission = data[i]["submitted"] || 'No'
+            nextSub = data[i]["nextSub"] || ''
             if(data[i]["isPaid"] == 2)
                 payment = "Paid";
             else if(data[i]["isPaid"] == 1)
@@ -83,6 +85,16 @@
             }
             td.innerHTML += t
             tr.appendChild(td)
+            td = document.createElement('td')
+            if (nextSub == 1) {
+                t = document.createElement('a');
+            t.setAttribute('href', "/admin/getsubmission/r2/id=" + data[i]["_id"]);
+                t.innerText = 'Download';
+            } else {
+                t = document.createTextNode(nextSub);
+            }
+            td.appendChild(t);
+            tr.appendChild(td);
             td = document.createElement('td');
             if (submission == 1) {
                 t = document.createElement('a');
